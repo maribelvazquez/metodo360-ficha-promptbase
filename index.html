@@ -219,7 +219,7 @@ footer.note b{color:var(--ink)}
 
   <div class="actions">
     <button class="go" type="button" id="b_ficha">Armar mi Ficha</button>
-    <button class="ghost" type="button" id="b_ej_ficha">Ver un ejemplo lleno</button>
+    <button class="ghost" type="button" id="b_ej_ficha">Recargar el ejemplo</button>
     <button class="ghost" type="button" id="b_ficha_copy">Copiar</button>
     <button class="ghost" type="button" id="b_ficha_dl">Descargar</button>
     <button class="ghost danger" type="button" id="b_ficha_clear">Limpiar</button>
@@ -327,7 +327,7 @@ footer.note b{color:var(--ink)}
 
   <div class="actions">
     <button class="go" type="button" id="b_prompt">Armar mi prompt</button>
-    <button class="ghost" type="button" id="b_ej_prompt">Ver un ejemplo lleno</button>
+    <button class="ghost" type="button" id="b_ej_prompt">Recargar el ejemplo</button>
     <button class="ghost" type="button" id="b_prompt_copy">Copiar</button>
     <button class="ghost" type="button" id="b_prompt_dl">Descargar</button>
     <button class="ghost danger" type="button" id="b_prompt_clear">Limpiar</button>
@@ -344,7 +344,7 @@ footer.note b{color:var(--ink)}
 <footer class="note">
   <b>Tus datos no salen de este equipo.</b> Lo que escribes se guarda solo en la memoria de tu navegador para que no lo pierdas al recargar, y se borra con el botón Limpiar. Nada se envía a ningún servidor.<br><br>
   <b>Antes de pegar algo en una IA:</b> sube a una herramienta de uso personal únicamente lo que no identifique a una persona ni a un cliente. Los datos identificables solo van en la herramienta que tu entidad tenga contratada, y pagar tú la suscripción no la vuelve institucional.<br><br>
-  Método 360 · Maribel Vázquez Menchaca · GMC360 y 360educa · v1.4
+  Método 360 · Maribel Vázquez Menchaca · GMC360 y 360educa · v1.5
 </footer>
 
 </div>
@@ -723,12 +723,11 @@ function cargaFicha(){
   $("ficha_flag").classList.add("hide");
 }
 $("b_ej_ficha").addEventListener("click", function(){
-  if(!pideConfirmar("ficha", $("p-ficha"), "Esto reemplaza lo que escribiste. Pulsa otra vez para cargar el ejemplo")) return;
+  if(!pideConfirmar("ficha", $("p-ficha"), "Esto reemplaza lo que escribiste. Pulsa otra vez para recargar el ejemplo")) return;
   cargaFicha(); save(); window.scrollTo(0,0);
-  toast("Ejemplo cargado: Banco Modelo, entidad ficticia");
+  toast("Ejemplo recargado: Banco Modelo, entidad ficticia");
 });
-$("b_ej_prompt").addEventListener("click", function(){
-  if(!pideConfirmar("prompt", $("p-prompt"), "Esto reemplaza lo que escribiste. Pulsa otra vez para cargar el ejemplo")) return;
+function cargaPrompt(){
   var e = EJEMPLO.prompt, i, chk;
   if(!val("f_entidad")) cargaFicha();
   $("p_rol").value = e.p_rol;
@@ -745,8 +744,11 @@ $("b_ej_prompt").addEventListener("click", function(){
   $("p_limites").value = e.p_limites;
   $("prompt_out").textContent = armarPrompt();
   $("prompt_flag").classList.add("hide");
-  save(); window.scrollTo(0,0);
-  toast("Ejemplo cargado: revisión de un capítulo del Manual");
+}
+$("b_ej_prompt").addEventListener("click", function(){
+  if(!pideConfirmar("prompt", $("p-prompt"), "Esto reemplaza lo que escribiste. Pulsa otra vez para recargar el ejemplo")) return;
+  cargaPrompt(); save(); window.scrollTo(0,0);
+  toast("Ejemplo recargado: revisión de un capítulo del Manual");
 });
 
 /* ---------- guardado local ---------- */
@@ -773,7 +775,14 @@ function load(){
     }
   }catch(e){}
 }
+var habiaGuardado = false;
+try{ habiaGuardado = !!localStorage.getItem(KEY); }catch(e){ habiaGuardado = false; }
 load();
+if(!habiaGuardado){
+  cargaFicha();
+  cargaPrompt();
+  save();
+}
 pintaRegla();
 $("d_regla").addEventListener("change", pintaRegla);
 (function(){

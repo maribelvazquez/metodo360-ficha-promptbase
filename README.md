@@ -1,7 +1,7 @@
 # Método 360 · Ficha de Contexto y Generador de prompts
 
 Mini herramienta de dos pestañas para el curso gratuito.
-Versión 1.4. Un solo archivo, sin librerías externas, sin servidor.
+Versión 1.5. Un solo archivo, sin librerías externas, sin servidor.
 
 ## Qué hace
 
@@ -20,11 +20,12 @@ dónde va a terminar y con qué extensión y tono, con ejemplos que se insertan
 al pulsarlos. El bloque del destino enseña cuándo pedir el archivo ya armado y
 cuándo pedir solo el contenido, para pegarlo en una plantilla propia.
 
-Cada pestaña trae un botón **Ver un ejemplo lleno** que carga el caso de Banco
-Modelo, una entidad ficticia, y en la pestaña 2 el prompt de revisión de un
-capítulo del Manual de Cumplimiento. Sirve para la demo en vivo y para que el
-alumno vea el nivel de detalle esperado. Si ya escribió algo, el botón pide
-confirmación antes de reemplazarlo.
+**La herramienta abre precargada** con el caso de Banco Modelo, una entidad
+ficticia, y con el prompt de revisión de un capítulo del Manual de Cumplimiento
+ya armado en la pestaña 2. Así el alumno ve desde el primer segundo qué se
+espera de cada campo y puede escribir encima. El botón Limpiar lo vacía todo, y
+el botón Recargar el ejemplo lo trae de vuelta. En cuanto el usuario escribe
+algo, eso es lo que se conserva al recargar la página, no el ejemplo.
 
 En el paso 4 se elige qué debe hacer la IA cuando un dato no está en los
 documentos cargados: investigarlo y marcarlo aparte, o no salir de ellos. La
