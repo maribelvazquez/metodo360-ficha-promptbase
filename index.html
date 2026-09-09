@@ -344,7 +344,7 @@ footer.note b{color:var(--ink)}
 <footer class="note">
   <b>Tus datos no salen de este equipo.</b> Lo que escribes se guarda solo en la memoria de tu navegador para que no lo pierdas al recargar, y se borra con el botón Limpiar. Nada se envía a ningún servidor.<br><br>
   <b>Antes de pegar algo en una IA:</b> sube a una herramienta de uso personal únicamente lo que no identifique a una persona ni a un cliente. Los datos identificables solo van en la herramienta que tu entidad tenga contratada, y pagar tú la suscripción no la vuelve institucional.<br><br>
-  Método 360 · Maribel Vázquez Menchaca · GMC360 y 360educa · v1.5
+  Método 360 · Maribel Vázquez Menchaca · GMC360 y 360educa · v1.6
 </footer>
 
 </div>
@@ -353,7 +353,7 @@ footer.note b{color:var(--ink)}
 <script>
 (function(){
 "use strict";
-var KEY = "m360_mini_v1";  // no cambiar entre versiones: conserva lo que el alumno ya escribio
+var KEY = "m360_mini_v2";  // no cambiar entre versiones: conserva lo que el alumno ya escribio
 
 function $(id){ return document.getElementById(id); }
 function val(id){ var e=$(id); return e ? e.value.trim() : ""; }
@@ -658,6 +658,7 @@ function limpiarScope(scope, outId, msgVacio){
     if(nodes[i].type==="checkbox") nodes[i].checked=false; else nodes[i].value="";
   }
   if(scope.id==="p-prompt" && $("d_regla")){ $("d_regla").value="abierta"; pintaRegla(); }
+  try{ localStorage.setItem(KEY+"_vacio","1"); }catch(e){}
   $(outId).textContent = msgVacio;
   var fl = scope.querySelector(".flag"); if(fl) fl.classList.add("hide");
   save(); toast("Listo, campos vacíos");
@@ -704,6 +705,7 @@ var EJEMPLO = {
 }
 };
 var confirmando = {};
+function marcaConEjemplo(){ try{ localStorage.removeItem(KEY+"_vacio"); }catch(e){} }
 function pideConfirmar(clave, scope, msg){
   var nodos = scope.querySelectorAll("input[type=text], textarea"), i, hay=false;
   for(i=0;i<nodos.length;i++){ if(nodos[i].value.trim()){ hay=true; break; } }
@@ -724,7 +726,7 @@ function cargaFicha(){
 }
 $("b_ej_ficha").addEventListener("click", function(){
   if(!pideConfirmar("ficha", $("p-ficha"), "Esto reemplaza lo que escribiste. Pulsa otra vez para recargar el ejemplo")) return;
-  cargaFicha(); save(); window.scrollTo(0,0);
+  cargaFicha(); marcaConEjemplo(); save(); window.scrollTo(0,0);
   toast("Ejemplo recargado: Banco Modelo, entidad ficticia");
 });
 function cargaPrompt(){
@@ -747,7 +749,7 @@ function cargaPrompt(){
 }
 $("b_ej_prompt").addEventListener("click", function(){
   if(!pideConfirmar("prompt", $("p-prompt"), "Esto reemplaza lo que escribiste. Pulsa otra vez para recargar el ejemplo")) return;
-  cargaPrompt(); save(); window.scrollTo(0,0);
+  cargaPrompt(); marcaConEjemplo(); save(); window.scrollTo(0,0);
   toast("Ejemplo recargado: revisión de un capítulo del Manual");
 });
 
@@ -775,10 +777,18 @@ function load(){
     }
   }catch(e){}
 }
-var habiaGuardado = false;
-try{ habiaGuardado = !!localStorage.getItem(KEY); }catch(e){ habiaGuardado = false; }
 load();
-if(!habiaGuardado){
+/* Precarga el ejemplo siempre que la herramienta esté vacía, sin importar lo que
+   haya en el almacenamiento del navegador. Única excepción: que el usuario haya
+   vaciado a propósito con el botón Limpiar. */
+function hayAlgoEscrito(){
+  var n=document.querySelectorAll("input[type=text], textarea"), i;
+  for(i=0;i<n.length;i++){ if(n[i].value.trim()) return true; }
+  return false;
+}
+var vacioAProposito = false;
+try{ vacioAProposito = localStorage.getItem(KEY+"_vacio") === "1"; }catch(e){}
+if(!hayAlgoEscrito() && !vacioAProposito){
   cargaFicha();
   cargaPrompt();
   save();
@@ -788,7 +798,7 @@ $("d_regla").addEventListener("change", pintaRegla);
 (function(){
   var n=campos(), i;
   for(i=0;i<n.length;i++){
-    n[i].addEventListener("input", save);
+    n[i].addEventListener("input", function(){ marcaConEjemplo(); save(); });
     n[i].addEventListener("change", save);
   }
 })();

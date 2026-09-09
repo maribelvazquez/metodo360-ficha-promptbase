@@ -1,7 +1,7 @@
 # Método 360 · Ficha de Contexto y Generador de prompts
 
 Mini herramienta de dos pestañas para el curso gratuito.
-Versión 1.5. Un solo archivo, sin librerías externas, sin servidor.
+Versión 1.6. Un solo archivo, sin librerías externas, sin servidor.
 
 ## Qué hace
 
