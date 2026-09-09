@@ -1,0 +1,22 @@
+# Metodo 360 - Ficha de Contexto y Generador de prompts - v1.1
+# Este archivo le dice a Netlify que publique la carpeta tal cual.
+# No hay que instalar nada ni compilar nada.
+
+[build]
+  publish = "."
+  command = ""
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Referrer-Policy = "no-referrer"
+    X-Content-Type-Options = "nosniff"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+# OPCIONAL. Si quieres que la herramienta solo se pueda mostrar DENTRO de tu
+# plataforma de curso y en ningun otro sitio, borra el signo # de la linea de
+# abajo y sustituye los dominios de ejemplo por los tuyos.
+# Mientras siga comentada, la pagina se puede insertar desde cualquier lado.
+#
+#    Content-Security-Policy = "frame-ancestors 'self' https://TU-CURSO.thinkific.com https://360educa.mx"

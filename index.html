@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Método 360 · Ficha y Prompts</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23A663CC'/%3E%3Ctext x='16' y='22' font-family='Arial,Helvetica,sans-serif' font-size='13' font-weight='bold' fill='white' text-anchor='middle'%3E360%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --violet:#A663CC; --coral:#FF8361; --green:#87D895; --okink:#2f7a4c;
+  --bg:#f7f6f9; --panel:#ffffff; --ink:#1b1b1e; --muted:#5c5c66;
+  --line:#e2e0e8; --field:#ffffff; --out:#f2f0f6;
+  --warn-bg:#fff1ec; --warn-line:#FF8361;
+  --radius:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#151419; --panel:#1e1d24; --ink:#f0eff4; --muted:#a5a3b0;
+    --line:#33313c; --field:#26252d; --out:#26252d;
+    --warn-bg:#3a231c; --warn-line:#FF8361; --okink:#87D895;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#151419; --panel:#1e1d24; --ink:#f0eff4; --muted:#a5a3b0;
+  --line:#33313c; --field:#26252d; --out:#26252d;
+  --warn-bg:#3a231c; --warn-line:#FF8361; --okink:#87D895;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font:16px/1.55 "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+  -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:960px;margin:0 auto;padding:20px 16px 64px}
+header.top{display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;justify-content:space-between;margin-bottom:6px}
+.brand{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--violet);font-weight:700}
+h1{font-size:24px;margin:2px 0 4px;font-weight:700;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:14px;margin:0 0 18px;max-width:62ch}
+.themebtn{background:none;border:1px solid var(--line);color:var(--muted);border-radius:99px;padding:5px 12px;font-size:12px;cursor:pointer}
+.themebtn:hover{border-color:var(--violet);color:var(--violet)}
+
+.tabs{display:flex;gap:6px;border-bottom:2px solid var(--line);margin-bottom:22px;flex-wrap:wrap}
+.tab{
+  appearance:none;background:none;border:0;border-bottom:3px solid transparent;
+  margin-bottom:-2px;padding:10px 14px;font-size:15px;font-weight:600;
+  color:var(--muted);cursor:pointer;font-family:inherit;
+}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--violet)}
+.tab .num{display:inline-block;width:20px;height:20px;line-height:20px;text-align:center;border-radius:50%;
+  background:var(--line);color:var(--muted);font-size:11px;margin-right:7px;vertical-align:1px}
+.tab[aria-selected="true"] .num{background:var(--violet);color:#fff}
+
+.block{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 18px 6px;margin-bottom:16px}
+.block > h2{font-size:12px;letter-spacing:.11em;text-transform:uppercase;color:var(--violet);margin:0 0 2px;font-weight:700}
+.block > .hint{color:var(--muted);font-size:13px;margin:0 0 14px}
+
+.warn{background:var(--warn-bg);border-left:4px solid var(--warn-line);border-radius:6px;padding:12px 14px;margin-bottom:18px}
+.warn b{display:block;font-size:15px;margin-bottom:3px}
+.warn p{margin:0;font-size:13.5px;color:var(--muted)}
+
+.f{margin-bottom:14px}
+.f label{display:block;font-size:13.5px;font-weight:600;margin-bottom:5px}
+.f .opt{font-weight:400;color:var(--muted);font-size:12.5px}
+.f .help{font-size:12.5px;color:var(--muted);margin:4px 0 0}
+input[type=text],textarea,select{
+  width:100%;background:var(--field);color:var(--ink);border:1px solid var(--line);
+  border-radius:8px;padding:9px 11px;font:15px/1.45 inherit;font-family:inherit;
+}
+textarea{resize:vertical;min-height:70px}
+input[type=text]:focus,textarea:focus{outline:2px solid var(--violet);outline-offset:-1px;border-color:var(--violet)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+@media (max-width:620px){.grid2{grid-template-columns:1fr}}
+
+.docrow{display:grid;grid-template-columns:auto 1fr 1.2fr;gap:10px;align-items:center;margin-bottom:9px}
+@media (max-width:620px){.docrow{grid-template-columns:auto 1fr;}.docrow .src{grid-column:2}}
+.docrow input[type=checkbox]{width:17px;height:17px;accent-color:var(--violet);cursor:pointer}
+.docrow .nm{font-size:14px}
+.docrow input[type=text]{padding:6px 9px;font-size:13.5px}
+
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 12px}
+.chip{
+  background:var(--field);border:1px solid var(--line);color:var(--muted);
+  border-radius:99px;padding:5px 12px;font-size:12.5px;cursor:pointer;font-family:inherit;
+}
+.chip:hover{border-color:var(--violet);color:var(--violet)}
+
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin:4px 0 18px}
+button.go{
+  background:var(--violet);color:#fff;border:0;border-radius:8px;padding:10px 18px;
+  font:600 14.5px inherit;font-family:inherit;cursor:pointer;
+}
+button.go:hover{filter:brightness(1.08)}
+button.ghost{
+  background:none;border:1px solid var(--line);color:var(--ink);border-radius:8px;
+  padding:10px 16px;font:600 14.5px inherit;font-family:inherit;cursor:pointer;
+}
+button.ghost:hover{border-color:var(--violet);color:var(--violet)}
+button.danger:hover{border-color:var(--coral);color:var(--coral)}
+
+.outwrap{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.outwrap h2{font-size:12px;letter-spacing:.11em;text-transform:uppercase;color:var(--okink);margin:0 0 12px;font-weight:700}
+pre.out{
+  background:var(--out);border:1px solid var(--line);border-radius:8px;padding:14px;
+  margin:0 0 14px;white-space:pre-wrap;word-wrap:break-word;
+  font:13.5px/1.6 ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
+  max-height:460px;overflow:auto;
+}
+.flag{color:var(--coral);font-size:13px;margin:0 0 12px}
+.ok{color:var(--muted);font-size:12.5px;margin:0}
+
+footer.note{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+footer.note b{color:var(--ink)}
+.hide{display:none}
+.toast{
+  position:fixed;left:50%;bottom:24px;transform:translateX(-50%);
+  background:var(--ink);color:var(--bg);padding:9px 18px;border-radius:99px;
+  font-size:13.5px;font-weight:600;opacity:0;transition:opacity .18s;pointer-events:none;z-index:9
+}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div>
+    <div class="brand">Método 360</div>
+    <h1>Tu Ficha de Contexto y tus prompts</h1>
+  </div>
+  <button class="themebtn" id="themebtn" type="button">Cambiar tema</button>
+</header>
+<p class="sub">Dos herramientas. Primero armas tu Ficha, una sola vez. Después la reutilizas en cada prompt que escribas, siguiendo los seis pasos del método: rol, contexto, tarea, datos, formato y límites.</p>
+
+<div class="tabs" role="tablist">
+  <button class="tab" id="tab-ficha" role="tab" aria-selected="true" aria-controls="p-ficha" type="button"><span class="num">1</span>Mi Ficha de Contexto</button>
+  <button class="tab" id="tab-prompt" role="tab" aria-selected="false" aria-controls="p-prompt" type="button"><span class="num">2</span>Generador de prompts</button>
+</div>
+
+<!-- ============ PESTAÑA 1 ============ -->
+<section id="p-ficha" role="tabpanel" aria-labelledby="tab-ficha">
+
+  <div class="warn">
+    <b>Aquí no va tu análisis.</b>
+    <p>En la Ficha solo va lo que únicamente tú puedes decir. Nada de tipologías, riesgos por producto, niveles inherente y residual ni grados de riesgo: eso es justo lo que le vas a pedir a la IA que te ayude a producir. Once campos y listo.</p>
+  </div>
+
+  <div class="block">
+    <h2>Bloque A · Quién eres</h2>
+    <p class="hint">Sin anonimizar. Esta Ficha es tuya y describe a tu entidad, no a tus clientes.</p>
+    <div class="grid2">
+      <div class="f">
+        <label for="f_entidad">Nombre de tu entidad</label>
+        <input type="text" id="f_entidad" data-req placeholder="Como aparece en tus documentos">
+      </div>
+      <div class="f">
+        <label for="f_tipo">Tipo de entidad</label>
+        <input type="text" id="f_tipo" data-req placeholder="Escríbelo con tus palabras">
+      </div>
+      <div class="f">
+        <label for="f_pais">País</label>
+        <input type="text" id="f_pais" data-req placeholder="Donde opera">
+      </div>
+      <div class="f">
+        <label for="f_lugar">Dónde está <span class="opt">· opcional</span></label>
+        <input type="text" id="f_lugar" placeholder="Ciudad, estado o región">
+      </div>
+    </div>
+    <div class="f">
+      <label for="f_puesto">Tu puesto</label>
+      <input type="text" id="f_puesto" data-req placeholder="Desde dónde haces esta consulta">
+    </div>
+  </div>
+
+  <div class="block">
+    <h2>Bloque B · Qué hace</h2>
+    <p class="hint">Descriptivo, no valorativo. Dos renglones bastan.</p>
+    <div class="f">
+      <label for="f_actividad">Qué hace tu entidad</label>
+      <textarea id="f_actividad" data-req rows="2" placeholder="A qué se dedica, qué productos o servicios ofrece y por qué canales"></textarea>
+    </div>
+    <div class="grid2">
+      <div class="f">
+        <label for="f_tamano">Tamaño <span class="opt">· opcional</span></label>
+        <input type="text" id="f_tamano" placeholder="Empleados, sucursales, clientes o volumen">
+      </div>
+      <div class="f">
+        <label for="f_periodo">Periodo de la información</label>
+        <input type="text" id="f_periodo" data-req placeholder="A qué fecha o ejercicio corresponde">
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h2>Bloque C · Bajo qué reglas</h2>
+    <p class="hint">Tú declaras tu marco. La herramienta no supone ninguno y no cita normas por ti.</p>
+    <div class="f">
+      <label for="f_marco">Marco normativo que te aplica</label>
+      <textarea id="f_marco" data-req rows="2" placeholder="Las leyes, disposiciones o circulares que te obligan, con el nombre exacto que usas tú"></textarea>
+    </div>
+    <div class="grid2">
+      <div class="f">
+        <label for="f_supervisor">Quién te supervisa</label>
+        <input type="text" id="f_supervisor" data-req placeholder="La autoridad que te revisa">
+      </div>
+      <div class="f">
+        <label for="f_reportes">A quién se reportan las operaciones <span class="opt">· opcional</span></label>
+        <input type="text" id="f_reportes" placeholder="La unidad o autoridad receptora">
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="go" type="button" id="b_ficha">Armar mi Ficha</button>
+    <button class="ghost" type="button" id="b_ficha_copy">Copiar</button>
+    <button class="ghost" type="button" id="b_ficha_dl">Descargar</button>
+    <button class="ghost danger" type="button" id="b_ficha_clear">Limpiar</button>
+  </div>
+
+  <div class="outwrap">
+    <h2>Tu Ficha</h2>
+    <p class="flag hide" id="ficha_flag"></p>
+    <pre class="out" id="ficha_out">Llena los campos de arriba y pulsa Armar mi Ficha.</pre>
+    <p class="ok">Guárdala. La vas a pegar en el paso 2 de todos tus prompts, y la actualizas solo cuando cambie algo de fondo en tu entidad.</p>
+  </div>
+</section>
+
+<!-- ============ PESTAÑA 2 ============ -->
+<section id="p-prompt" role="tabpanel" aria-labelledby="tab-prompt" class="hide">
+
+  <div class="block">
+    <h2>Paso 1 · Rol</h2>
+    <p class="hint">A quién quieres que la IA se parezca mientras te responde.</p>
+    <div class="f">
+      <label for="p_rol">Actúa como</label>
+      <textarea id="p_rol" data-req rows="2" placeholder="Especialidad, años de oficio y mentalidad con la que quieres que trabaje"></textarea>
+    </div>
+  </div>
+
+  <div class="block">
+    <h2>Paso 2 · Contexto</h2>
+    <p class="hint">Aquí entra tu Ficha. Si ya la armaste en la pestaña 1, se pega sola.</p>
+    <div class="actions" style="margin-bottom:12px">
+      <button class="ghost" type="button" id="b_usar_ficha">Usar mi Ficha de Contexto</button>
+    </div>
+    <div class="f">
+      <label for="p_ctx">Contexto <span class="opt">· tu Ficha, más lo que aplique solo a esta consulta</span></label>
+      <textarea id="p_ctx" data-req rows="7" placeholder="Pega aquí tu Ficha y agrega lo específico de este encargo: qué pasó, qué te pidieron, para cuándo"></textarea>
+    </div>
+  </div>
+
+  <div class="block">
+    <h2>Paso 3 · Tarea</h2>
+    <p class="hint">Un verbo y un entregable. Si son tres cosas, son tres prompts.</p>
+    <div class="f">
+      <label for="p_tarea">Qué quieres que haga</label>
+      <textarea id="p_tarea" data-req rows="3" placeholder="Qué produce, sobre qué y para qué lo vas a usar"></textarea>
+    </div>
+  </div>
+
+  <div class="block">
+    <h2>Paso 4 · Datos</h2>
+    <p class="hint">De dónde sale cada cifra. Marca lo que vas a cargar y anota qué sacas de ahí.</p>
+    <div id="docs"></div>
+    <div class="f" style="margin-top:12px">
+      <label for="p_datos">Otros datos que le vas a dar <span class="opt">· opcional</span></label>
+      <textarea id="p_datos" rows="2" placeholder="Cifras, periodos, listas o fragmentos que pegues directo en el chat"></textarea>
+    </div>
+  </div>
+
+  <div class="block">
+    <h2>Paso 5 · Formato</h2>
+    <p class="hint">Cómo lo quieres recibir. Si no lo dices, te lo entrega como se le ocurra.</p>
+    <div class="chips" id="fmt_chips"></div>
+    <div class="f">
+      <label for="p_formato">Formato de salida</label>
+      <textarea id="p_formato" data-req rows="3" placeholder="Estructura, extensión, orden de las secciones y estilo de redacción"></textarea>
+    </div>
+  </div>
+
+  <div class="block">
+    <h2>Paso 6 · Límites</h2>
+    <p class="hint">Lo que no debe hacer. Es el paso que más se olvida y el que más problemas evita.</p>
+    <div class="actions" style="margin-bottom:12px">
+      <button class="ghost" type="button" id="b_limites">Cargar límites base</button>
+    </div>
+    <div class="f">
+      <label for="p_limites">Límites</label>
+      <textarea id="p_limites" data-req rows="8" placeholder="Qué no debe inventar, qué no debe decidir por ti y qué debe marcar para que tú lo revises"></textarea>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="go" type="button" id="b_prompt">Armar mi prompt</button>
+    <button class="ghost" type="button" id="b_prompt_copy">Copiar</button>
+    <button class="ghost" type="button" id="b_prompt_dl">Descargar</button>
+    <button class="ghost danger" type="button" id="b_prompt_clear">Limpiar</button>
+  </div>
+
+  <div class="outwrap">
+    <h2>Tu prompt</h2>
+    <p class="flag hide" id="prompt_flag"></p>
+    <pre class="out" id="prompt_out">Llena los seis pasos y pulsa Armar mi prompt.</pre>
+    <p class="ok">Pégalo en la herramienta de IA que tengas autorizada. Lo que salga es un borrador de trabajo: la revisión y la firma siguen siendo tuyas.</p>
+  </div>
+</section>
+
+<footer class="note">
+  <b>Tus datos no salen de este equipo.</b> Lo que escribes se guarda solo en la memoria de tu navegador para que no lo pierdas al recargar, y se borra con el botón Limpiar. Nada se envía a ningún servidor.<br><br>
+  <b>Antes de pegar algo en una IA:</b> sube a una herramienta de uso personal únicamente lo que no identifique a una persona ni a un cliente. Los datos identificables solo van en la herramienta que tu entidad tenga contratada, y pagar tú la suscripción no la vuelve institucional.<br><br>
+  Método 360 · Maribel Vázquez Menchaca · GMC360 y 360educa · v1.1
+</footer>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+var KEY = "m360_mini_v1";  // no cambiar entre versiones: conserva lo que el alumno ya escribio
+
+function $(id){ return document.getElementById(id); }
+function val(id){ var e=$(id); return e ? e.value.trim() : ""; }
+
+/* ---------- toast ---------- */
+var toastT;
+function toast(msg){
+  var t=$("toast"); t.textContent=msg; t.classList.add("show");
+  clearTimeout(toastT); toastT=setTimeout(function(){ t.classList.remove("show"); },1600);
+}
+
+/* ---------- tema ---------- */
+$("themebtn").addEventListener("click", function(){
+  var r=document.documentElement, cur=r.getAttribute("data-theme");
+  var dark = cur ? cur==="dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  r.setAttribute("data-theme", dark ? "light" : "dark");
+  try{ localStorage.setItem(KEY+"_theme", dark?"light":"dark"); }catch(e){}
+});
+try{ var th=localStorage.getItem(KEY+"_theme"); if(th) document.documentElement.setAttribute("data-theme",th); }catch(e){}
+
+/* ---------- pestañas ---------- */
+function showTab(which){
+  var f = which==="ficha";
+  $("tab-ficha").setAttribute("aria-selected", f?"true":"false");
+  $("tab-prompt").setAttribute("aria-selected", f?"false":"true");
+  $("p-ficha").classList.toggle("hide", !f);
+  $("p-prompt").classList.toggle("hide", f);
+  window.scrollTo(0,0);
+  try{ localStorage.setItem(KEY+"_tab", which); }catch(e){}
+}
+$("tab-ficha").addEventListener("click", function(){ showTab("ficha"); });
+$("tab-prompt").addEventListener("click", function(){ showTab("prompt"); });
+
+/* ---------- paso 4: documentos ---------- */
+var DOCS = [
+  "Manual o políticas internas",
+  "Metodología de evaluación de riesgo",
+  "Base o archivo operativo",
+  "Informe de auditoría",
+  "Resultados de pruebas a sistemas",
+  "Texto de la normativa aplicable",
+  "",
+  ""
+];
+(function buildDocs(){
+  var box=$("docs"), i, row, cb, nm, src;
+  for(i=0;i<DOCS.length;i++){
+    row=document.createElement("div"); row.className="docrow";
+    cb=document.createElement("input"); cb.type="checkbox"; cb.id="d_chk_"+i;
+    cb.setAttribute("aria-label","Incluir documento "+(i+1));
+    row.appendChild(cb);
+    if(DOCS[i]){
+      nm=document.createElement("label"); nm.className="nm"; nm.setAttribute("for","d_chk_"+i);
+      nm.textContent=DOCS[i]; row.appendChild(nm);
+    } else {
+      nm=document.createElement("input"); nm.type="text"; nm.id="d_nom_"+i;
+      nm.placeholder="Otro documento"; row.appendChild(nm);
+    }
+    src=document.createElement("input"); src.type="text"; src.id="d_src_"+i;
+    src.className="src"; src.placeholder="De aquí sale...";
+    row.appendChild(src);
+    box.appendChild(row);
+  }
+})();
+
+/* ---------- chips de formato ---------- */
+var FMT = [
+  ["Texto plano", "Texto corrido, sin tablas y sin cuadros."],
+  ["Viñetas cortas", "Viñetas de un renglón, sin párrafos largos."],
+  ["Con encabezados", "Secciones con encabezado, en el orden que te indico."],
+  ["Extensión", "Máximo {{número}} palabras en total."],
+  ["Cita la fuente", "Al final de cada afirmación, di de qué documento y de qué apartado salió."],
+  ["Tabla de hallazgos", "Una fila por hallazgo, con las columnas que te indico."]
+];
+(function buildChips(){
+  var box=$("fmt_chips");
+  FMT.forEach(function(pair){
+    var b=document.createElement("button");
+    b.type="button"; b.className="chip"; b.textContent=pair[0];
+    b.addEventListener("click", function(){
+      var t=$("p_formato");
+      t.value = (t.value.trim() ? t.value.replace(/\s+$/,"")+"\n" : "") + pair[1];
+      t.focus(); save();
+    });
+    box.appendChild(b);
+  });
+})();
+
+/* ---------- límites base ---------- */
+var LIMITES = [
+  "No inventes cifras ni datos. Si algo no está en lo que te di, escríbelo como pendiente.",
+  "Cuando falte evidencia, escribe pendiente en vez de escribir que no se cumple.",
+  "Marca con [VERIFICAR] toda afirmación que no puedas sostener con un dato de mis documentos.",
+  "No clasifiques grado de riesgo ni emitas dictamen. Eso lo decido yo.",
+  "No decidas si procede un reporte a la autoridad ni redactes uno.",
+  "No cites normas que no estén declaradas en mi contexto, ni supongas cuál me aplica.",
+  "Tono técnico y neutro, sin adjetivos de valoración y sin recomendaciones comerciales.",
+  "Al final, dime en tres renglones qué te faltó para responder mejor."
+];
+$("b_limites").addEventListener("click", function(){
+  $("p_limites").value = LIMITES.map(function(l){ return "- "+l; }).join("\n");
+  save(); toast("Límites base cargados");
+});
+
+/* ---------- armar ficha ---------- */
+var FICHA_CAMPOS = [
+  ["QUIÉN SOY", [
+    ["Entidad","f_entidad"], ["Tipo de entidad","f_tipo"], ["País","f_pais"],
+    ["Ubicación","f_lugar"], ["Mi puesto","f_puesto"]
+  ]],
+  ["QUÉ HACE", [
+    ["Actividad","f_actividad"], ["Tamaño","f_tamano"], ["Periodo de la información","f_periodo"]
+  ]],
+  ["BAJO QUÉ REGLAS", [
+    ["Marco normativo","f_marco"], ["Quién supervisa","f_supervisor"], ["Reportes a","f_reportes"]
+  ]]
+];
+
+var FICHA_CIERRE = "Esta Ficha describe a mi entidad. No contiene análisis, ni niveles de riesgo, ni conclusiones.";
+
+function faltantes(scope){
+  var out=[], nodes=scope.querySelectorAll("[data-req]"), i, lab;
+  for(i=0;i<nodes.length;i++){
+    if(!nodes[i].value.trim()){
+      lab = scope.querySelector('label[for="'+nodes[i].id+'"]');
+      out.push(lab ? lab.textContent.replace(/\s*·.*$/,"").trim() : nodes[i].id);
+    }
+  }
+  return out;
+}
+
+function armarFicha(){
+  var txt = "FICHA DE CONTEXTO\nMétodo 360\n";
+  FICHA_CAMPOS.forEach(function(bloque){
+    var lineas = [];
+    bloque[1].forEach(function(c){
+      var v = val(c[1]);
+      if(v) lineas.push(c[0]+": "+v.replace(/\n+/g," "));
+    });
+    if(lineas.length) txt += "\n"+bloque[0]+"\n"+lineas.join("\n")+"\n";
+  });
+  txt += "\n" + FICHA_CIERRE;
+  return txt;
+}
+
+$("b_ficha").addEventListener("click", function(){
+  var falta = faltantes($("p-ficha")), flag=$("ficha_flag");
+  if(falta.length){
+    flag.textContent = "Te faltan "+falta.length+" campos: "+falta.join(", ")+". Armé la Ficha con lo que hay.";
+    flag.classList.remove("hide");
+  } else {
+    flag.classList.add("hide");
+  }
+  $("ficha_out").textContent = armarFicha();
+  save(); toast("Ficha lista");
+});
+
+$("b_usar_ficha").addEventListener("click", function(){
+  var f = armarFicha(), t = $("p_ctx"), extra = t.value;
+  var corte = extra.lastIndexOf(FICHA_CIERRE);
+  if(extra.indexOf("FICHA DE CONTEXTO") !== -1 && corte !== -1){
+    extra = extra.slice(corte + FICHA_CIERRE.length);
+  }
+  extra = extra.replace(/^\s+|\s+$/g, "");
+  t.value = f + (extra ? "\n\n" + extra : "");
+  save(); toast(extra ? "Ficha actualizada en el contexto" : "Ficha pegada en el contexto");
+});
+
+/* ---------- armar prompt ---------- */
+function bloqueDocs(){
+  var marcados=[], i, nom, src, chk;
+  for(i=0;i<DOCS.length;i++){
+    chk=$("d_chk_"+i);
+    if(!chk || !chk.checked) continue;
+    nom = DOCS[i] ? DOCS[i] : val("d_nom_"+i);
+    if(!nom) continue;
+    src = val("d_src_"+i);
+    marcados.push("- "+nom+(src ? ": "+src : ""));
+  }
+  return marcados;
+}
+
+var REGLA_DOCS =
+  "Trabaja primero con estos documentos: todo dato y toda cifra de mi entidad salen de ahí. " +
+  "Lo que no encuentres en ellos, investígalo en fuentes públicas, márcalo con [INVESTIGADO] y di de dónde lo sacaste. " +
+  "No lo mezcles con lo que salió de mis documentos.";
+
+function armarPrompt(){
+  var p = [];
+  p.push("1. ROL");
+  p.push(val("p_rol") || "[pendiente]");
+  p.push("");
+  p.push("2. CONTEXTO");
+  p.push(val("p_ctx") || "[pendiente]");
+  p.push("");
+  p.push("3. TAREA");
+  p.push(val("p_tarea") || "[pendiente]");
+  p.push("");
+  p.push("4. DATOS");
+  var docs = bloqueDocs();
+  if(docs.length){
+    p.push("Te voy a cargar estos documentos:");
+    p.push(docs.join("\n"));
+    p.push("");
+    p.push(REGLA_DOCS);
+  } else {
+    p.push("No te voy a cargar documentos. Trabaja solo con lo que te escribo aquí y no supongas nada que no esté.");
+  }
+  if(val("p_datos")){ p.push(""); p.push(val("p_datos")); }
+  p.push("");
+  p.push("5. FORMATO");
+  p.push(val("p_formato") || "[pendiente]");
+  p.push("");
+  p.push("6. LÍMITES");
+  p.push(val("p_limites") || "[pendiente]");
+  p.push("");
+  p.push("Ejecuta ahora. Si algo de lo anterior te resulta ambiguo, pregúntamelo antes de empezar.");
+  return p.join("\n");
+}
+
+$("b_prompt").addEventListener("click", function(){
+  var falta = faltantes($("p-prompt")), flag=$("prompt_flag");
+  if(falta.length){
+    flag.textContent = "Faltan pasos: "+falta.join(", ")+". Quedaron marcados como pendiente dentro del prompt.";
+    flag.classList.remove("hide");
+  } else {
+    flag.classList.add("hide");
+  }
+  $("prompt_out").textContent = armarPrompt();
+  save(); toast("Prompt listo");
+});
+
+/* ---------- copiar y descargar ---------- */
+function copiar(txt){
+  if(!txt || txt.indexOf("Llena ")===0){ toast("Primero ármalo"); return; }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(function(){ toast("Copiado"); },function(){ fallback(txt); });
+  } else { fallback(txt); }
+}
+function fallback(txt){
+  var ta=document.createElement("textarea");
+  ta.value=txt; ta.style.position="fixed"; ta.style.opacity="0";
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand("copy"); toast("Copiado"); }
+  catch(e){ toast("Selecciona el texto y copia a mano"); }
+  document.body.removeChild(ta);
+}
+function bajar(txt, nombre){
+  if(!txt || txt.indexOf("Llena ")===0){ toast("Primero ármalo"); return; }
+  var b=new Blob([txt],{type:"text/plain;charset=utf-8"});
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(b); a.download=nombre;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); document.body.removeChild(a); },400);
+}
+$("b_ficha_copy").addEventListener("click", function(){ copiar($("ficha_out").textContent); });
+$("b_prompt_copy").addEventListener("click", function(){ copiar($("prompt_out").textContent); });
+$("b_ficha_dl").addEventListener("click", function(){ bajar($("ficha_out").textContent, "Ficha_de_Contexto.txt"); });
+$("b_prompt_dl").addEventListener("click", function(){ bajar($("prompt_out").textContent, "Prompt_Metodo_360.txt"); });
+
+/* ---------- limpiar ---------- */
+function limpiarScope(scope, outId, msgVacio){
+  var nodes=scope.querySelectorAll("input, textarea"), i;
+  for(i=0;i<nodes.length;i++){
+    if(nodes[i].type==="checkbox") nodes[i].checked=false; else nodes[i].value="";
+  }
+  $(outId).textContent = msgVacio;
+  var fl = scope.querySelector(".flag"); if(fl) fl.classList.add("hide");
+  save(); toast("Listo, campos vacíos");
+}
+$("b_ficha_clear").addEventListener("click", function(){
+  limpiarScope($("p-ficha"), "ficha_out", "Llena los campos de arriba y pulsa Armar mi Ficha.");
+});
+$("b_prompt_clear").addEventListener("click", function(){
+  limpiarScope($("p-prompt"), "prompt_out", "Llena los seis pasos y pulsa Armar mi prompt.");
+});
+
+/* ---------- guardado local ---------- */
+function campos(){ return document.querySelectorAll("input[type=text], input[type=checkbox], textarea"); }
+function save(){
+  try{
+    var d={}, n=campos(), i;
+    for(i=0;i<n.length;i++){
+      if(!n[i].id) continue;
+      d[n[i].id] = n[i].type==="checkbox" ? n[i].checked : n[i].value;
+    }
+    localStorage.setItem(KEY, JSON.stringify(d));
+  }catch(e){}
+}
+function load(){
+  try{
+    var raw=localStorage.getItem(KEY); if(!raw) return;
+    var d=JSON.parse(raw), k, el;
+    for(k in d){
+      if(!Object.prototype.hasOwnProperty.call(d,k)) continue;
+      el=$(k); if(!el) continue;
+      if(el.type==="checkbox") el.checked=!!d[k]; else el.value=d[k];
+    }
+  }catch(e){}
+}
+load();
+(function(){
+  var n=campos(), i;
+  for(i=0;i<n.length;i++){
+    n[i].addEventListener("input", save);
+    n[i].addEventListener("change", save);
+  }
+})();
+try{ var tb=localStorage.getItem(KEY+"_tab"); if(tb) showTab(tb); }catch(e){}
+})();
+</script>
+</body>
+</html>
