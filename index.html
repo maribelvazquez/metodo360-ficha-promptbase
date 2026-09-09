@@ -174,6 +174,7 @@ footer.note b{color:var(--ink)}
     <div class="f">
       <label for="f_puesto">Tu puesto</label>
       <input type="text" id="f_puesto" data-req placeholder="Desde dónde haces esta consulta">
+      <p class="help">Este es el único campo que habla de ti. Todos los demás describen a la entidad sobre la que vas a trabajar, que no siempre es donde tú trabajas: si eres auditor o consultor externo, la Ficha es de la entidad revisada y aquí dices desde dónde la revisas.</p>
     </div>
   </div>
 
@@ -218,6 +219,7 @@ footer.note b{color:var(--ink)}
 
   <div class="actions">
     <button class="go" type="button" id="b_ficha">Armar mi Ficha</button>
+    <button class="ghost" type="button" id="b_ej_ficha">Ver un ejemplo lleno</button>
     <button class="ghost" type="button" id="b_ficha_copy">Copiar</button>
     <button class="ghost" type="button" id="b_ficha_dl">Descargar</button>
     <button class="ghost danger" type="button" id="b_ficha_clear">Limpiar</button>
@@ -268,6 +270,14 @@ footer.note b{color:var(--ink)}
     <h2>Paso 4 · Datos</h2>
     <p class="hint">De dónde sale cada cifra. Marca lo que vas a cargar y anota qué sacas de ahí.</p>
     <div id="docs"></div>
+    <div class="f" style="margin-top:16px">
+      <label for="d_regla">Qué hace cuando un dato no está en tus documentos</label>
+      <select id="d_regla">
+        <option value="abierta">Que lo investigue y lo marque aparte</option>
+        <option value="cerrada">Que no salga de mis documentos</option>
+      </select>
+      <p class="help" id="d_regla_txt"></p>
+    </div>
     <div class="f" style="margin-top:12px">
       <label for="p_datos">Otros datos que le vas a dar <span class="opt">· opcional</span></label>
       <textarea id="p_datos" rows="2" placeholder="Cifras, periodos, listas o fragmentos que pegues directo en el chat"></textarea>
@@ -317,6 +327,7 @@ footer.note b{color:var(--ink)}
 
   <div class="actions">
     <button class="go" type="button" id="b_prompt">Armar mi prompt</button>
+    <button class="ghost" type="button" id="b_ej_prompt">Ver un ejemplo lleno</button>
     <button class="ghost" type="button" id="b_prompt_copy">Copiar</button>
     <button class="ghost" type="button" id="b_prompt_dl">Descargar</button>
     <button class="ghost danger" type="button" id="b_prompt_clear">Limpiar</button>
@@ -333,7 +344,7 @@ footer.note b{color:var(--ink)}
 <footer class="note">
   <b>Tus datos no salen de este equipo.</b> Lo que escribes se guarda solo en la memoria de tu navegador para que no lo pierdas al recargar, y se borra con el botón Limpiar. Nada se envía a ningún servidor.<br><br>
   <b>Antes de pegar algo en una IA:</b> sube a una herramienta de uso personal únicamente lo que no identifique a una persona ni a un cliente. Los datos identificables solo van en la herramienta que tu entidad tenga contratada, y pagar tú la suscripción no la vuelve institucional.<br><br>
-  Método 360 · Maribel Vázquez Menchaca · GMC360 y 360educa · v1.3
+  Método 360 · Maribel Vázquez Menchaca · GMC360 y 360educa · v1.4
 </footer>
 
 </div>
@@ -546,10 +557,26 @@ function bloqueDocs(){
   return marcados;
 }
 
-var REGLA_DOCS =
-  "Trabaja primero con estos documentos: todo dato y toda cifra de mi entidad salen de ahí. " +
-  "Lo que no encuentres en ellos, investígalo en fuentes públicas, márcalo con [INVESTIGADO] y di de dónde lo sacaste. " +
-  "No lo mezcles con lo que salió de mis documentos.";
+var REGLAS = {
+  abierta: {
+    nota: "Sirve cuando estás investigando y quieres que complete lo que te falta, siempre que se vea qué salió de dónde.",
+    texto: "Trabaja primero con estos documentos: todo dato y toda cifra de mi entidad salen de ahí. " +
+      "Lo que no encuentres en ellos, investígalo en fuentes públicas, márcalo con [INVESTIGADO] y di de dónde lo sacaste. " +
+      "No lo mezcles con lo que salió de mis documentos."
+  },
+  cerrada: {
+    nota: "Sirve cuando revisas un documento y el hueco es justo lo que buscas, como en una auditoría: que no lo rellene con lo que suelen decir los demás.",
+    texto: "Trabaja únicamente con estos documentos. No uses conocimiento previo para fundamentar ni completes con lo que normalmente dicen otros documentos parecidos. " +
+      "Si algo no encuentra respaldo en lo que te cargué, escribe [SIN FUNDAMENTO EN EL CORPUS CARGADO] y descríbelo en palabras. " +
+      "La falta de un dato es un resultado, no un problema que debas resolver."
+  }
+};
+function pintaRegla(){
+  var sel=$("d_regla"), txt=$("d_regla_txt");
+  if(!sel || !txt) return;
+  var r = REGLAS[sel.value] || REGLAS.abierta;
+  txt.textContent = r.nota + " Se escribe sola dentro del prompt: " + r.texto;
+}
 
 function armarPrompt(){
   var p = [];
@@ -568,7 +595,7 @@ function armarPrompt(){
     p.push("Te voy a cargar estos documentos:");
     p.push(docs.join("\n"));
     p.push("");
-    p.push(REGLA_DOCS);
+    p.push((REGLAS[val("d_regla")] || REGLAS.abierta).texto);
   } else {
     p.push("No te voy a cargar documentos. Trabaja solo con lo que te escribo aquí y no supongas nada que no esté.");
   }
@@ -630,6 +657,7 @@ function limpiarScope(scope, outId, msgVacio){
   for(i=0;i<nodes.length;i++){
     if(nodes[i].type==="checkbox") nodes[i].checked=false; else nodes[i].value="";
   }
+  if(scope.id==="p-prompt" && $("d_regla")){ $("d_regla").value="abierta"; pintaRegla(); }
   $(outId).textContent = msgVacio;
   var fl = scope.querySelector(".flag"); if(fl) fl.classList.add("hide");
   save(); toast("Listo, campos vacíos");
@@ -641,8 +669,88 @@ $("b_prompt_clear").addEventListener("click", function(){
   limpiarScope($("p-prompt"), "prompt_out", "Llena los seis pasos y pulsa Armar mi prompt.");
 });
 
+/* ---------- ejemplo cargable: Banco Modelo, entidad ficticia ---------- */
+var EJEMPLO = {
+  ficha: {
+  "f_entidad": "Banco Modelo, S.A., Institución de Banca Múltiple",
+  "f_tipo": "Institución de banca múltiple. Banca comercial y de consumo, con operación minorista y una cartera de empresas medianas.",
+  "f_pais": "México",
+  "f_lugar": "Oficinas centrales en Ciudad de México. Red de sucursales en 14 estados, concentrada en el Bajío, el occidente y la zona metropolitana del Valle de México.",
+  "f_puesto": "Auditor externo designado para la revisión anual en materia de PLD/FT del ejercicio 2025. Trabajo por encargo del Comité de Auditoría y no formo parte de la estructura de la Institución.",
+  "f_actividad": "1. Productos y servicios: el producto principal es la cuenta de depósito a la vista para persona física, con tarjeta de débito y banca en línea. Como productos secundarios ofrece cuenta de nómina por convenio empresarial, crédito simple y crédito revolvente para persona física, crédito de habilitación o avío para persona moral, inversión a plazo, compraventa de divisas en ventanilla y transferencias nacionales e internacionales.\n\n2. Clientes: aproximadamente 1.9 millones de Clientes. Alrededor del 92% son personas físicas (nómina, ahorro y crédito de consumo) y el 8% personas morales, principalmente comercio al por menor, servicios profesionales, transporte de carga y agroindustria. Se acercan por sucursal, por convenio de nómina con su empleador y por la aplicación móvil, que permite apertura sin acudir a sucursal.\n\n3. Zonas: opera en 14 estados de la República. La mayor concentración de sucursales y de captación está en Querétaro, Guanajuato, Jalisco y Estado de México. Tiene corresponsales bancarios en localidades donde no hay sucursal propia. No tiene subsidiarias ni sucursales en el extranjero, pero recibe transferencias del exterior, principalmente remesas familiares de Estados Unidos.\n\n4. Operaciones: depósitos y retiros en efectivo en ventanilla y cajero, transferencias SPEI, pago de servicios, dispersión de nómina, disposición de crédito, compraventa de dólares en ventanilla y recepción de transferencias internacionales. Moneda principal: pesos mexicanos; también opera en dólares estadounidenses. Los depósitos en efectivo de persona física se concentran en montos de entre 5,000 y 40,000 pesos, y la dispersión de nómina es quincenal.",
+  "f_tamano": "1,900,000 Clientes aproximadamente. 212 sucursales, 38 corresponsales bancarios y alrededor de 4,300 empleados.",
+  "f_periodo": "Ejercicio 2025, con cifras al 31 de diciembre de 2025. La documentación sujeta a revisión es la vigente a esa fecha.",
+  "f_marco": "Disposiciones de carácter general a que se refiere el artículo 115 de la Ley de Instituciones de Crédito. Lineamientos para la elaboración del informe de auditoría a que se refiere la Disposición Quincuagésima Cuarta de las citadas Disposiciones, publicados en el Diario Oficial de la Federación el 18 de octubre de 2021. Guía para la elaboración de una Metodología de Evaluación de Riesgos emitida por la Comisión Nacional Bancaria y de Valores.",
+  "f_supervisor": "Comisión Nacional Bancaria y de Valores",
+  "f_reportes": "Unidad de Inteligencia Financiera de la Secretaría de Hacienda y Crédito Público, por conducto de la Comisión Nacional Bancaria y de Valores."
+},
+  prompt: {
+  "p_rol": "Auditor Especializado en PLD/FT en México, actuando dentro de una auditoría externa a una entidad financiera. Reviso documentos de la entidad auditada y emito hallazgos y observaciones que después sustento y firmo yo.",
+  "p_ctx_extra": "Estoy en el módulo de revisión del Manual de Cumplimiento. Voy a revisar un capítulo del Manual de la entidad auditada. Todavía no tengo entrevistas ni expedientes: sólo el texto del capítulo. De esta revisión sale el requerimiento de información que le voy a mandar al Oficial de Cumplimiento.",
+  "p_tarea": "Determinar si el capítulo se puede auditar: si dice qué se hace, quién lo hace, con qué periodicidad y con qué evidencia se acredita.\n\nConcretamente:\n1. Qué obligaciones sí desarrolla el capítulo.\n2. Qué obligaciones quedan enunciadas pero sin procedimiento.\n3. Qué frases impiden verificar el cumplimiento por no fijar un criterio medible.\n4. Qué apartados del mismo capítulo se contradicen entre sí.\n5. Qué le preguntaría a la entidad para cerrar cada hueco.",
+  "p_formato": "Los cinco puntos de la tarea, en ese orden, con subtítulos. Cada frase no auditable, citada textualmente y explicada.\n\nLo voy a pegar en la plataforma de auditoría, así que dame el contenido y no un archivo armado.\n\nCierra con una tabla de tres columnas: número, Hallazgos u Observaciones, Acciones Correctivas o Recomendaciones. Si es hallazgo, escribe \"Hallazgo:\" y en la tercera columna \"Acción Correctiva:\". Si es observación, escribe \"Observación:\" y \"Recomendación de Mejora:\".\n\nY al final, el apartado CITAS POR VERIFICAR: lista numerada de cada disposición que mencionaste, con la afirmación exacta que sostiene cada una.\n\nTono técnico y neutro, sin adjetivos de gravedad.",
+  "p_limites": "- No inventes. Si algo no está en el texto, escribe \"no se desprende del texto\". No completes con lo que normalmente dicen los manuales.\n- Cada vez que cites una disposición, márcala así: [CITA POR VERIFICAR: ...]. Sin excepción.\n- Distingue HALLAZGO, que omite algo que debe contener o se contradice, de OBSERVACIÓN, que lo contiene pero es mejorable.\n- No asignes calificación. Eso lo hace el auditor.\n- No uses \"grave\" ni \"crítico\" sin sustento.",
+  "docs": [
+    [
+      0,
+      "el capítulo del Manual de Cumplimiento de la entidad auditada"
+    ],
+    [
+      5,
+      "las Disposiciones de carácter general aplicables al sector"
+    ]
+  ],
+  "regla": "cerrada"
+}
+};
+var confirmando = {};
+function pideConfirmar(clave, scope, msg){
+  var nodos = scope.querySelectorAll("input[type=text], textarea"), i, hay=false;
+  for(i=0;i<nodos.length;i++){ if(nodos[i].value.trim()){ hay=true; break; } }
+  if(!hay) return true;
+  if(confirmando[clave]) { confirmando[clave]=false; return true; }
+  confirmando[clave]=true;
+  toast(msg);
+  setTimeout(function(){ confirmando[clave]=false; }, 6000);
+  return false;
+}
+function cargaFicha(){
+  var k;
+  for(k in EJEMPLO.ficha){
+    if(Object.prototype.hasOwnProperty.call(EJEMPLO.ficha,k) && $(k)) $(k).value = EJEMPLO.ficha[k];
+  }
+  $("ficha_out").textContent = armarFicha();
+  $("ficha_flag").classList.add("hide");
+}
+$("b_ej_ficha").addEventListener("click", function(){
+  if(!pideConfirmar("ficha", $("p-ficha"), "Esto reemplaza lo que escribiste. Pulsa otra vez para cargar el ejemplo")) return;
+  cargaFicha(); save(); window.scrollTo(0,0);
+  toast("Ejemplo cargado: Banco Modelo, entidad ficticia");
+});
+$("b_ej_prompt").addEventListener("click", function(){
+  if(!pideConfirmar("prompt", $("p-prompt"), "Esto reemplaza lo que escribiste. Pulsa otra vez para cargar el ejemplo")) return;
+  var e = EJEMPLO.prompt, i, chk;
+  if(!val("f_entidad")) cargaFicha();
+  $("p_rol").value = e.p_rol;
+  $("p_ctx").value = armarFicha() + "\n\n" + e.p_ctx_extra;
+  $("p_tarea").value = e.p_tarea;
+  for(i=0;i<DOCS.length;i++){ chk=$("d_chk_"+i); if(chk) chk.checked=false; if($("d_src_"+i)) $("d_src_"+i).value=""; }
+  e.docs.forEach(function(par){
+    if($("d_chk_"+par[0])) $("d_chk_"+par[0]).checked = true;
+    if($("d_src_"+par[0])) $("d_src_"+par[0]).value = par[1];
+  });
+  $("d_regla").value = e.regla; pintaRegla();
+  $("p_datos").value = "";
+  $("p_formato").value = e.p_formato;
+  $("p_limites").value = e.p_limites;
+  $("prompt_out").textContent = armarPrompt();
+  $("prompt_flag").classList.add("hide");
+  save(); window.scrollTo(0,0);
+  toast("Ejemplo cargado: revisión de un capítulo del Manual");
+});
+
 /* ---------- guardado local ---------- */
-function campos(){ return document.querySelectorAll("input[type=text], input[type=checkbox], textarea"); }
+function campos(){ return document.querySelectorAll("input[type=text], input[type=checkbox], textarea, select"); }
 function save(){
   try{
     var d={}, n=campos(), i;
@@ -661,10 +769,13 @@ function load(){
       if(!Object.prototype.hasOwnProperty.call(d,k)) continue;
       el=$(k); if(!el) continue;
       if(el.type==="checkbox") el.checked=!!d[k]; else el.value=d[k];
+      if(el.id==="d_regla") pintaRegla();
     }
   }catch(e){}
 }
 load();
+pintaRegla();
+$("d_regla").addEventListener("change", pintaRegla);
 (function(){
   var n=campos(), i;
   for(i=0;i<n.length;i++){
