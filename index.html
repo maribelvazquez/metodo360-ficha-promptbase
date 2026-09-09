@@ -285,8 +285,9 @@ footer.note b{color:var(--ink)}
     </div>
 
     <div class="guia">
-      <h3>2. Dónde lo vas a pegar</h3>
-      <p>Una IA de chat no te devuelve un archivo de Excel, uno de Word ni un PDF ya armado: te devuelve el contenido y tú lo pegas donde va. Por eso el formato se pide pensando en dónde va a terminar. Pulsa el destino y ajusta las columnas o las secciones que van entre llaves.</p>
+      <h3>2. Dónde va a terminar</h3>
+      <p>Las herramientas de hoy te entregan el archivo ya armado, en hoja de cálculo, documento, PDF o presentación, y las que no pueden te devuelven el contenido listo para pegar. En los dos casos sale mejor si dices el destino desde el prompt, con las columnas o las secciones que quieres. Pulsa el destino y ajusta lo que va entre llaves.</p>
+      <p><b>Cuál pedir.</b> Pide el archivo cuando lo vas a usar tal cual. Pide el contenido cuando lo vas a pegar en tu propia plantilla, porque el archivo que genera la IA trae su formato y no el tuyo, y acomodarlo cuesta más que pegar el texto.</p>
       <div class="chips" data-grupo="soporte"></div>
     </div>
 
@@ -298,7 +299,7 @@ footer.note b{color:var(--ink)}
 
     <div class="f">
       <label for="p_formato">Formato de salida <span class="opt">· lo que pulses se acumula aquí, y puedes escribirlo tú</span></label>
-      <textarea id="p_formato" data-req rows="4" placeholder="Cómo lo estructura, dónde lo vas a pegar, qué extensión y con qué tono"></textarea>
+      <textarea id="p_formato" data-req rows="4" placeholder="Cómo lo estructura, dónde va a terminar, qué extensión y con qué tono"></textarea>
     </div>
   </div>
 
@@ -332,7 +333,7 @@ footer.note b{color:var(--ink)}
 <footer class="note">
   <b>Tus datos no salen de este equipo.</b> Lo que escribes se guarda solo en la memoria de tu navegador para que no lo pierdas al recargar, y se borra con el botón Limpiar. Nada se envía a ningún servidor.<br><br>
   <b>Antes de pegar algo en una IA:</b> sube a una herramienta de uso personal únicamente lo que no identifique a una persona ni a un cliente. Los datos identificables solo van en la herramienta que tu entidad tenga contratada, y pagar tú la suscripción no la vuelve institucional.<br><br>
-  Método 360 · Maribel Vázquez Menchaca · GMC360 y 360educa · v1.2
+  Método 360 · Maribel Vázquez Menchaca · GMC360 y 360educa · v1.3
 </footer>
 
 </div>
@@ -416,11 +417,12 @@ var FMT = {
     ["Por secciones", "Divide la respuesta en secciones con encabezado, en este orden: {{sección_1}}, {{sección_2}}, {{sección_3}}."]
   ],
   soporte: [
-    ["Para pegar en Excel", "Voy a pegar esto en una hoja de cálculo. Devuélvelo como tabla con estas columnas: {{columna_1}}, {{columna_2}}, {{columna_3}}. Una fila por caso, columnas separadas por punto y coma, sin texto antes ni después de la tabla y sin celdas vacías: donde no haya dato escribe pendiente."],
-    ["Para pegar en Word", "Voy a pegar esto en un documento de Word. Texto corrido con encabezados de sección, sin tablas y sin emojis. No uses negritas más que en los encabezados."],
-    ["Para un informe o PDF", "Va a quedar como informe. Estructura: objetivo, alcance, desarrollo, hallazgos y siguiente paso. Numera las secciones y cierra con una conclusión de máximo cinco renglones."],
-    ["Para láminas", "Va a quedar en láminas de presentación. Una idea por lámina, con título de máximo seis palabras y tres viñetas de un renglón. Al final de cada lámina, sugiere qué gráfico o imagen la acompañaría."],
-    ["Para leer en pantalla", "Solo lo voy a leer aquí. Empieza por la conclusión en dos renglones y después el detalle."]
+    ["Hoja de cálculo", "Esto termina en una hoja de cálculo. Entrégamelo como archivo de hoja de cálculo, en una sola hoja, con estas columnas: {{columna_1}}, {{columna_2}}, {{columna_3}}. Una fila por caso y sin celdas vacías: donde no haya dato escribe pendiente. Si no puedes generar el archivo, dame la tabla con las columnas separadas por punto y coma y sin texto antes ni después, para pegarla."],
+    ["Documento de texto", "Esto termina en un documento. Entrégamelo como archivo de texto con encabezados de sección, sin tablas y sin emojis, y sin negritas fuera de los encabezados. Si no puedes generar el archivo, dame el texto igual de limpio para pegarlo."],
+    ["Informe o PDF", "Esto termina como informe. Estructura: objetivo, alcance, desarrollo, hallazgos y siguiente paso, con las secciones numeradas y una conclusión de máximo cinco renglones. Si puedes generar el archivo, entrégamelo en PDF."],
+    ["Presentación", "Esto termina en láminas. Una idea por lámina, con título de máximo seis palabras y tres viñetas de un renglón, y al final de cada lámina sugiere qué gráfico o imagen la acompañaría. Si puedes generar el archivo, entrégame la presentación."],
+    ["Solo leerlo aquí", "Solo lo voy a leer en pantalla, no lo voy a guardar. Empieza por la conclusión en dos renglones y después el detalle. No generes ningún archivo."],
+    ["En mi plantilla", "El archivo lo armo yo en mi plantilla, así que no generes archivos. Dame solo el contenido en texto plano, sin decoración, en el orden en que lo voy a pegar."]
   ],
   tono: [
     ["Extensión", "Máximo {{número}} palabras en total."],

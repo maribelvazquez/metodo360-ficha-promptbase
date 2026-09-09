@@ -1,7 +1,7 @@
 # Método 360 · Ficha de Contexto y Generador de prompts
 
 Mini herramienta de dos pestañas para el curso gratuito.
-Versión 1.2. Un solo archivo, sin librerías externas, sin servidor.
+Versión 1.3. Un solo archivo, sin librerías externas, sin servidor.
 
 ## Qué hace
 
@@ -16,8 +16,9 @@ sí va en la Ficha, de calificar por riesgo, que no.
 contexto, tarea, datos, formato y límites. Trae un botón que pega la Ficha en
 el paso 2, un constructor de carga documental en el paso 4 y los límites base
 en el paso 6. El paso 5 está explicado en tres decisiones, cómo lo estructura,
-dónde lo vas a pegar y con qué extensión y tono, con ejemplos que se insertan
-al pulsarlos.
+dónde va a terminar y con qué extensión y tono, con ejemplos que se insertan
+al pulsarlos. El bloque del destino enseña cuándo pedir el archivo ya armado y
+cuándo pedir solo el contenido, para pegarlo en una plantilla propia.
 
 Lo que el alumno escribe se guarda solo en la memoria de su navegador. Nada
 viaja a ningún servidor. El botón Limpiar lo borra.
