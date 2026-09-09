@@ -79,6 +79,9 @@ input[type=text]:focus,textarea:focus{outline:2px solid var(--violet);outline-of
 .docrow .nm{font-size:14px}
 .docrow input[type=text]{padding:6px 9px;font-size:13.5px}
 
+.guia{border-left:3px solid var(--line);padding:2px 0 2px 14px;margin:0 0 16px}
+.guia h3{font-size:14.5px;margin:0 0 4px;font-weight:700}
+.guia p{margin:0 0 9px;font-size:13.5px;color:var(--muted)}
 .chips{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 12px}
 .chip{
   background:var(--field);border:1px solid var(--line);color:var(--muted);
@@ -143,7 +146,8 @@ footer.note b{color:var(--ink)}
 
   <div class="warn">
     <b>Aquí no va tu análisis.</b>
-    <p>En la Ficha solo va lo que únicamente tú puedes decir. Nada de tipologías, riesgos por producto, niveles inherente y residual ni grados de riesgo: eso es justo lo que le vas a pedir a la IA que te ayude a producir. Once campos y listo.</p>
+    <p>En la Ficha solo va lo que únicamente tú puedes decir. Nada de tipologías, riesgos por producto, niveles inherente y residual ni grados de riesgo: eso es justo lo que le vas a pedir a la IA que te ayude a producir.</p>
+    <p style="margin-top:8px"><b>Describir sí, calificar no.</b> Decir qué productos manejas, quiénes son tus clientes, en qué zonas operas y qué operaciones haces es dato, y sí va aquí. Decir cuáles de ellos son de riesgo alto es análisis, y ese no va. Once campos y listo.</p>
   </div>
 
   <div class="block">
@@ -175,10 +179,11 @@ footer.note b{color:var(--ink)}
 
   <div class="block">
     <h2>Bloque B · Qué hace</h2>
-    <p class="hint">Descriptivo, no valorativo. Dos renglones bastan.</p>
+    <p class="hint">Es el campo que más rinde de toda la Ficha: de aquí sale casi todo lo que la IA va a poder analizar después. Vale la pena escribirlo con calma una vez.</p>
     <div class="f">
-      <label for="f_actividad">Qué hace tu entidad</label>
-      <textarea id="f_actividad" data-req rows="2" placeholder="A qué se dedica, qué productos o servicios ofrece y por qué canales"></textarea>
+      <label for="f_actividad">Qué hace tu entidad <span class="opt">· cuatro frentes</span></label>
+      <textarea id="f_actividad" data-req rows="6" placeholder="1. Productos y servicios: qué vendes u ofreces, cuál es el principal y cuáles los secundarios.&#10;2. Clientes: quiénes son, personas o empresas, de qué giros, cómo se te acercan.&#10;3. Zonas: dónde operas, en qué estados, ciudades o países, y por qué canales, presencial, digital o los dos.&#10;4. Operaciones: qué tipo de movimientos haces, en qué monedas, montos típicos, efectivo o transferencia, y cada cuánto."></textarea>
+      <p class="help">Estos cuatro frentes son los que la IA necesita para ayudarte a analizar riesgo después. Descríbelos tal como son, sin calificarlos: aquí no dices cuál es alto ni cuál es bajo.</p>
     </div>
     <div class="grid2">
       <div class="f">
@@ -271,11 +276,29 @@ footer.note b{color:var(--ink)}
 
   <div class="block">
     <h2>Paso 5 · Formato</h2>
-    <p class="hint">Cómo lo quieres recibir. Si no lo dices, te lo entrega como se le ocurra.</p>
-    <div class="chips" id="fmt_chips"></div>
+    <p class="hint">Tres decisiones. Si no las dices, la IA elige por ti y casi siempre elige de más: te devuelve tablas y negritas donde ibas a redactar un oficio.</p>
+
+    <div class="guia">
+      <h3>1. Cómo quieres que lo estructure</h3>
+      <p>Texto corrido para lo que vas a redactar. Tabla cuando vas a comparar o listar muchos casos. Viñetas cuando solo lo vas a revisar de un vistazo.</p>
+      <div class="chips" data-grupo="estructura"></div>
+    </div>
+
+    <div class="guia">
+      <h3>2. Dónde lo vas a pegar</h3>
+      <p>Una IA de chat no te devuelve un archivo de Excel, uno de Word ni un PDF ya armado: te devuelve el contenido y tú lo pegas donde va. Por eso el formato se pide pensando en dónde va a terminar. Pulsa el destino y ajusta las columnas o las secciones que van entre llaves.</p>
+      <div class="chips" data-grupo="soporte"></div>
+    </div>
+
+    <div class="guia">
+      <h3>3. Extensión y tono</h3>
+      <p>Sin un tope, se extiende. Sin una instrucción de tono, adorna. Y si vas a verificar lo que te diga, pídele desde aquí que te diga de dónde salió cada afirmación.</p>
+      <div class="chips" data-grupo="tono"></div>
+    </div>
+
     <div class="f">
-      <label for="p_formato">Formato de salida</label>
-      <textarea id="p_formato" data-req rows="3" placeholder="Estructura, extensión, orden de las secciones y estilo de redacción"></textarea>
+      <label for="p_formato">Formato de salida <span class="opt">· lo que pulses se acumula aquí, y puedes escribirlo tú</span></label>
+      <textarea id="p_formato" data-req rows="4" placeholder="Cómo lo estructura, dónde lo vas a pegar, qué extensión y con qué tono"></textarea>
     </div>
   </div>
 
@@ -309,7 +332,7 @@ footer.note b{color:var(--ink)}
 <footer class="note">
   <b>Tus datos no salen de este equipo.</b> Lo que escribes se guarda solo en la memoria de tu navegador para que no lo pierdas al recargar, y se borra con el botón Limpiar. Nada se envía a ningún servidor.<br><br>
   <b>Antes de pegar algo en una IA:</b> sube a una herramienta de uso personal únicamente lo que no identifique a una persona ni a un cliente. Los datos identificables solo van en la herramienta que tu entidad tenga contratada, y pagar tú la suscripción no la vuelve institucional.<br><br>
-  Método 360 · Maribel Vázquez Menchaca · GMC360 y 360educa · v1.1
+  Método 360 · Maribel Vázquez Menchaca · GMC360 y 360educa · v1.2
 </footer>
 
 </div>
@@ -385,26 +408,46 @@ var DOCS = [
 })();
 
 /* ---------- chips de formato ---------- */
-var FMT = [
-  ["Texto plano", "Texto corrido, sin tablas y sin cuadros."],
-  ["Viñetas cortas", "Viñetas de un renglón, sin párrafos largos."],
-  ["Con encabezados", "Secciones con encabezado, en el orden que te indico."],
-  ["Extensión", "Máximo {{número}} palabras en total."],
-  ["Cita la fuente", "Al final de cada afirmación, di de qué documento y de qué apartado salió."],
-  ["Tabla de hallazgos", "Una fila por hallazgo, con las columnas que te indico."]
-];
+var FMT = {
+  estructura: [
+    ["Texto corrido", "Texto corrido, sin tablas y sin cuadros."],
+    ["Tabla", "Preséntalo en una tabla con estas columnas: {{columna_1}}, {{columna_2}}, {{columna_3}}. Una fila por caso."],
+    ["Viñetas", "Viñetas de un renglón, sin párrafos largos y sin viñetas dentro de viñetas."],
+    ["Por secciones", "Divide la respuesta en secciones con encabezado, en este orden: {{sección_1}}, {{sección_2}}, {{sección_3}}."]
+  ],
+  soporte: [
+    ["Para pegar en Excel", "Voy a pegar esto en una hoja de cálculo. Devuélvelo como tabla con estas columnas: {{columna_1}}, {{columna_2}}, {{columna_3}}. Una fila por caso, columnas separadas por punto y coma, sin texto antes ni después de la tabla y sin celdas vacías: donde no haya dato escribe pendiente."],
+    ["Para pegar en Word", "Voy a pegar esto en un documento de Word. Texto corrido con encabezados de sección, sin tablas y sin emojis. No uses negritas más que en los encabezados."],
+    ["Para un informe o PDF", "Va a quedar como informe. Estructura: objetivo, alcance, desarrollo, hallazgos y siguiente paso. Numera las secciones y cierra con una conclusión de máximo cinco renglones."],
+    ["Para láminas", "Va a quedar en láminas de presentación. Una idea por lámina, con título de máximo seis palabras y tres viñetas de un renglón. Al final de cada lámina, sugiere qué gráfico o imagen la acompañaría."],
+    ["Para leer en pantalla", "Solo lo voy a leer aquí. Empieza por la conclusión en dos renglones y después el detalle."]
+  ],
+  tono: [
+    ["Extensión", "Máximo {{número}} palabras en total."],
+    ["Tono técnico", "Tono técnico y neutro, sin adjetivos de valoración y sin recomendaciones comerciales."],
+    ["Cita la fuente", "Al final de cada afirmación, di de qué documento y de qué apartado salió."],
+    ["Sin relleno", "Nada de introducción, de resumen previo ni de cierre motivacional. Empieza directo por el contenido."]
+  ]
+};
 (function buildChips(){
-  var box=$("fmt_chips");
-  FMT.forEach(function(pair){
-    var b=document.createElement("button");
-    b.type="button"; b.className="chip"; b.textContent=pair[0];
-    b.addEventListener("click", function(){
-      var t=$("p_formato");
-      t.value = (t.value.trim() ? t.value.replace(/\s+$/,"")+"\n" : "") + pair[1];
-      t.focus(); save();
-    });
-    box.appendChild(b);
-  });
+  var cajas = document.querySelectorAll(".chips[data-grupo]"), i;
+  for(i=0;i<cajas.length;i++){
+    (function(caja){
+      var lista = FMT[caja.getAttribute("data-grupo")] || [];
+      lista.forEach(function(par){
+        var b=document.createElement("button");
+        b.type="button"; b.className="chip"; b.textContent=par[0];
+        b.title="Agrega este texto al formato";
+        b.addEventListener("click", function(){
+          var t=$("p_formato"), yatiene = t.value.indexOf(par[1]) !== -1;
+          if(yatiene){ toast("Ya estaba puesto"); return; }
+          t.value = (t.value.trim() ? t.value.replace(/\s+$/,"")+"\n" : "") + par[1];
+          save();
+        });
+        caja.appendChild(b);
+      });
+    })(cajas[i]);
+  }
 })();
 
 /* ---------- límites base ---------- */

@@ -1,19 +1,23 @@
 # Método 360 · Ficha de Contexto y Generador de prompts
 
 Mini herramienta de dos pestañas para el curso gratuito.
-Versión 1.1. Un solo archivo, sin librerías externas, sin servidor.
+Versión 1.2. Un solo archivo, sin librerías externas, sin servidor.
 
 ## Qué hace
 
 **Pestaña 1. Mi Ficha de Contexto.** Once campos en tres bloques: quién eres,
-qué hace tu entidad y bajo qué reglas operas. La herramienta no supone ningún
-marco normativo: lo declara el usuario. El aviso de arriba recuerda que en la
-Ficha no va el análisis.
+qué hace tu entidad y bajo qué reglas operas. El campo de actividad pide cuatro
+frentes, productos, clientes, zonas y operaciones, porque son los que la IA
+necesita para el análisis posterior. La herramienta no supone ningún marco
+normativo: lo declara el usuario. El aviso de arriba distingue describir, que
+sí va en la Ficha, de calificar por riesgo, que no.
 
 **Pestaña 2. Generador de prompts.** Los seis pasos del método, en orden: rol,
 contexto, tarea, datos, formato y límites. Trae un botón que pega la Ficha en
-el paso 2, un constructor de carga documental en el paso 4, atajos de formato
-en el paso 5 y los límites base en el paso 6.
+el paso 2, un constructor de carga documental en el paso 4 y los límites base
+en el paso 6. El paso 5 está explicado en tres decisiones, cómo lo estructura,
+dónde lo vas a pegar y con qué extensión y tono, con ejemplos que se insertan
+al pulsarlos.
 
 Lo que el alumno escribe se guarda solo en la memoria de su navegador. Nada
 viaja a ningún servidor. El botón Limpiar lo borra.
